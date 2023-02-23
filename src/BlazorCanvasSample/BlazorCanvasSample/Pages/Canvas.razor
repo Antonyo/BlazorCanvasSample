@@ -1,0 +1,33 @@
+﻿@page "/canvas"
+@using Blazor.Extensions
+@using Blazor.Extensions.Canvas
+@using Blazor.Extensions.Canvas.Canvas2D
+
+<div>
+  <BECanvas Width="600" Height="400" @ref="_canvasReference"></BECanvas>
+  <img @ref="_blazorIconRef" style="display: none;" src="/images/blazor.svg">
+</div>
+
+@code {
+
+  internal ElementReference _blazorIconRef;
+  private BECanvasComponent _canvasReference;
+
+  protected override async Task OnAfterRenderAsync(bool firstRender) => await Invalidate(firstRender);
+
+  private async Task Invalidate(bool firstRender = false)
+  {
+    var context = await _canvasReference.CreateCanvas2DAsync();
+    
+    // Draw a red rectangle
+    await context.SetStrokeStyleAsync("#FF0000");
+    await context.StrokeRectAsync(10.0, 10.0, 100.0, 25.0);
+
+    // Draw some text
+    await context.SetStrokeStyleAsync("#000000");
+    await context.StrokeTextAsync("This is some text", 10.0, 50.0);
+
+    // Draw an icon
+    await context.DrawImageAsync(_blazorIconRef, 10.0, 75.0, 50.0, 50.0);
+  }
+}
